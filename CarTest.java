@@ -7,8 +7,8 @@ import java.awt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CarTest {
-     Volvo240 volvo240;
-     Saab95 saab95;
+    Volvo240 volvo240;
+    Saab95 saab95;
 
     @BeforeEach
     void setUp() {
@@ -118,7 +118,7 @@ class CarTest {
 
     @Test
     void getPosition() {
-        assertEquals(new Point(0, 0),volvo240.getPosition());
+        assertEquals(new Point(0, 0), volvo240.getPosition());
         assertEquals(new Point(0, 0), saab95.getPosition());
     }
 
@@ -140,16 +140,73 @@ class CarTest {
         saab95.startEngine();
         volvo240.turnLeft();
         saab95.turnLeft();
-        assertEquals(Math.PI/4, volvo240.getDirection());
-        assertEquals(Math.PI/4, saab95.getDirection());
+        assertEquals(Math.PI / 4, volvo240.getDirection());
+        assertEquals(Math.PI / 4, saab95.getDirection());
     }
+
     @Test
     void turnRight() {
         volvo240.startEngine();
         saab95.startEngine();
         volvo240.turnRight();
         saab95.turnRight();
-        assertEquals(-Math.PI/4, volvo240.getDirection());
-        assertEquals(-Math.PI/4, saab95.getDirection());
+        assertEquals(-Math.PI / 4, volvo240.getDirection());
+        assertEquals(-Math.PI / 4, saab95.getDirection());
+    }
+
+    @Test
+    void SanityCheckGas() {
+        for (int i = 0; i < 1000; i++) {
+            volvo240.gas(0.5);
+            saab95.gas(0.5);
+        }
+        assertTrue(volvo240.getCurrentSpeed() <= volvo240.getEnginePower());
+        assertTrue(saab95.getCurrentSpeed() <= saab95.getEnginePower());
+    }
+
+    @Test
+    void SanityCheckBrake() {
+        for (int i = 0; i < 1000; i++) {
+            volvo240.brake(0.5);
+            saab95.brake(0.5);
+        }
+        assertEquals(0, volvo240.getCurrentSpeed());
+        assertEquals(0, saab95.getCurrentSpeed());
+    }
+
+
+
+    @Test
+    void SanityCheckSpeedChangeDecrease() {
+        volvo240.startEngine();
+        saab95.startEngine();
+        for (int i = 0; i < 1000; i++) {
+            volvo240.gas(0.5);
+            saab95.gas(0.5);
+        double oldSpeedVolvo = volvo240.getCurrentSpeed();
+        double oldSpeedSaab = saab95.getCurrentSpeed();
+        volvo240.brake(0.5);
+        saab95.brake(0.5);
+        assertTrue(volvo240.getCurrentSpeed() < oldSpeedVolvo);
+        assertTrue(saab95.getCurrentSpeed() < oldSpeedSaab);
+        }
+    }
+
+    @Test
+    void SanityCheckSpeedChaneIncrease(){
+        volvo240.startEngine();
+        saab95.startEngine();
+        for (int i = 0; i < 1000; i++) {
+            volvo240.gas(0.5);
+            saab95.gas(0.5);
+        double oldSpeedVolvo = volvo240.getCurrentSpeed();
+        double oldSpeedSaab = saab95.getCurrentSpeed();
+        volvo240.gas(0.5);
+        saab95.gas(0.5);
+        assertTrue(volvo240.getCurrentSpeed() >= oldSpeedVolvo);
+        assertTrue(saab95.getCurrentSpeed() >= oldSpeedSaab);
+        }
+
+
     }
 }
